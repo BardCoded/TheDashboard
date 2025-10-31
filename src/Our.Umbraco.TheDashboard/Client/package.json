@@ -1,7 +1,7 @@
 {
   "name": "the-dashboard-umbraco",
   "private": true,
-  "version": "16.0.0",
+  "version": "17.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,9 +12,9 @@
   },
   "devDependencies": {
     "@hey-api/client-fetch": "^0.10.0",
-    "@hey-api/openapi-ts": "^0.64.10",
+    "@hey-api/openapi-ts": "^0.85.00",
     "@types/node": "^22.15.17",
-    "@umbraco-cms/backoffice": "^16.0.0",
+    "@umbraco-cms/backoffice": "^17.0.0-rc1",
     "lit": "^3.3.0",
     "typescript": "^5.8.2",
     "vite": "^6.2.0"
