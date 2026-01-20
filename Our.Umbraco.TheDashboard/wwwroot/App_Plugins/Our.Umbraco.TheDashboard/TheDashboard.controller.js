@@ -17,7 +17,7 @@
                     item.datestampFormatted = dateHelper.getLocalDate(item.datestamp, currentUser.locale, 'LLL');
 
                     if (item.scheduledPublishDate != null) {
-                        item.scheduledPublishDateFormatted = dateHelper.getLocalDate(item.datestamp, currentUser.locale, 'LLL');
+                        item.scheduledPublishDateFormatted = dateHelper.getLocalDate(item.scheduledPublishDate, currentUser.locale, 'LLL');
                     }
                 });
 
