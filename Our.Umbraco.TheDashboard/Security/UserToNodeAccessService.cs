@@ -32,7 +32,7 @@ namespace Our.Umbraco.TheDashboard.Security
         {
             _entityService = entityService;
             _appCaches = appCaches;
-            _userStartNodes = currentUser.CalculateContentStartNodeIds(_entityService,appCaches);
+            _userStartNodes = (currentUser.CalculateContentStartNodeIds(_entityService,appCaches) ?? []).Where(x=>x != -1).ToArray();
             _permissions = userService.GetPermissions(currentUser, AllNodeIdsFromPath(nodes));
         }
 
