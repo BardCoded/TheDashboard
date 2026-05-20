@@ -260,7 +260,7 @@ export class TheDashboardDashboardElement extends UmbElementMixin(LitElement) {
     .dot.action {background:var(--uui-color-emphasis, #3544b1);}
     .dot.success {background:var(--uui-color-positive);}
     .dot.warning {background:var(--uui-color-warning);}
-    .dot.selected {background:var(--uui-color-current,#f5c1bc);}
+    .dot.selected {background:var(--uui-color-current,#f5c1bc); color: var(--uui-color-text);}
     .dot.danger {background:var(--uui-color-danger);}
 
   `]

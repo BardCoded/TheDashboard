@@ -1,12 +1,14 @@
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Our.Umbraco.TheDashboard.Controllers.OpenApi;
+using Our.Umbraco.TheDashboard.Counters.Collections;
 using Our.Umbraco.TheDashboard.Counters.Implement;
 using Our.Umbraco.TheDashboard.Extensions;
 using Our.Umbraco.TheDashboard.Services;
+using Umbraco.Cms.Api.Common.OpenApi;
+using Umbraco.Cms.Api.Management.OpenApi;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
-using Our.Umbraco.TheDashboard.Controllers.OpenApi;
-using Our.Umbraco.TheDashboard.Counters.Collections;
-using Umbraco.Cms.Api.Common.OpenApi;
 
 namespace Our.Umbraco.TheDashboard;
 
@@ -26,10 +28,25 @@ public class TheDashboardComposer : IComposer
         builder.TheDashboardCounters().Append<MembersNewLastWeekDashboardCounter>();
 
 #if DEBUG
-        // SWAGGER - Only use in debug build to avoid exposing in production messing up things in the core.
-        builder.Services.ConfigureOptions<ConfigureTheDashboardApiSwaggerGenOptions>();
-        builder.Services.AddSingleton<ISchemaIdHandler, TheDashboardSchemaIdHandler>();
-        builder.Services.AddSingleton<IOperationIdHandler, TheDashboardOperationIdHandler>();
+        builder.AddBackOfficeOpenApiDocument(
+            TheDashboardApiConfiguration.ApiName,
+            document => document
+                .WithTitle(TheDashboardApiConfiguration.ApiTitle)
+                .WithBackOfficeAuthentication()
+                .ConfigureOpenApiOptions(options => options.AddOperationTransformer((operation, context, _) =>
+                {
+                    // Extracts the action name to use as operation id.
+                    var routeValues = context.Description.ActionDescriptor.RouteValues;
+
+                    if (routeValues.TryGetValue("action", out var actionName) &&
+                        !string.IsNullOrWhiteSpace(actionName))
+                    {
+                        operation.OperationId = actionName;
+                    }
+
+                    return Task.CompletedTask;
+                }))
+        );
 #endif
 
     }

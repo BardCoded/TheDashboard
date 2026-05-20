@@ -1,7 +1,7 @@
 import { defineConfig,defaultPlugins } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-	input: 'http://localhost:24760/umbraco/swagger/the-dashboard/swagger.json',
+	input: 'http://localhost:24760/umbraco/openapi/the-dashboard.json',
 	output: {
 		path: './src/backend-api',
 	},

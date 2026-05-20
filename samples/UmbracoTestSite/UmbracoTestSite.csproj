@@ -1,47 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-	    <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UmbracoCmsVersion>18.0.0-beta2</UmbracoCmsVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Umbraco.Cms" Version="17.0.0" />
-      <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="17.0.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms" Version="$(UmbracoCmsVersion)" />
+    <PackageReference Include="Umbraco.Cms.DevelopmentMode.Backoffice" Version="$(UmbracoCmsVersion)" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <ProjectReference Include="..\..\src\Our.Umbraco.TheDashboard\Our.Umbraco.TheDashboard.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+      <ProjectReference Include="..\..\src\Our.Umbraco.TheDashboard\Our.Umbraco.TheDashboard.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
+  <ItemGroup>
 		<!-- Opt-in to app-local ICU to ensure consistent globalization APIs across different platforms -->
 		<PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="72.1.0.3" />
 		<RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="72.1.0.3" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
 	</ItemGroup>
 
-    <ItemGroup>
-        <Compile Remove="umbraco\Data\**" />
-        <Compile Remove="umbraco\logs\**" />
-        <Compile Remove="umbraco\MediaCache\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <EmbeddedResource Remove="umbraco\Data\**" />
-        <EmbeddedResource Remove="umbraco\logs\**" />
-        <EmbeddedResource Remove="umbraco\MediaCache\**" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Remove="umbraco\Data\**" />
-        <None Remove="umbraco\logs\**" />
-        <None Remove="umbraco\MediaCache\**" />
-        <None Include="config\**\*.*">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </None>
-        <None Include="umbraco\**\*.*">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-        </None>
+  <ItemGroup>
+    <Compile Remove="umbraco\Data\**" />
+    <Compile Remove="umbraco\logs\**" />
+    <Compile Remove="umbraco\MediaCache\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="umbraco\Data\**" />
+    <EmbeddedResource Remove="umbraco\logs\**" />
+    <EmbeddedResource Remove="umbraco\MediaCache\**" />
+  </ItemGroup>
+  <ItemGroup>
+      <None Remove="umbraco\Data\**" />
+      <None Remove="umbraco\logs\**" />
+      <None Remove="umbraco\MediaCache\**" />
+      <None Include="config\**\*.*">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </None>
+      <None Include="umbraco\**\*.*">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </None>
     </ItemGroup>
     <ItemGroup>
         <Content Remove="umbraco\Data\**" />
