@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Our.Umbraco.TheDashboard.Controllers.OpenApi;
 using Our.Umbraco.TheDashboard.Counters.Collections;
 using Our.Umbraco.TheDashboard.Counters.Implement;
