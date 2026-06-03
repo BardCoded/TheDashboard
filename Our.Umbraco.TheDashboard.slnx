@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution/">
+    <File Path=".gitignore" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="umbraco-marketplace.json" />
+  </Folder>
+  <Project Path="samples/UmbracoTestSite/UmbracoTestSite.csproj" />
+  <Project Path="src/Our.Umbraco.TheDashboard/Our.Umbraco.TheDashboard.csproj" />
+</Solution>
