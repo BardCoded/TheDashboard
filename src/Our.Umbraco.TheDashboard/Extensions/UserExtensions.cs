@@ -2,6 +2,8 @@ using System.Security.Cryptography;
 using System.Text;
 using Our.Umbraco.TheDashboard.Models.Frontend;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Media;
+using Umbraco.Cms.Core.Models;
 using Umbraco.Extensions;
 
 namespace Our.Umbraco.TheDashboard.Extensions;
@@ -15,7 +17,7 @@ public static class UserExtensions
     /// <returns>
     /// A list of 5 different sized avatar URLs
     /// </returns>
-    public static UserAvatarFrontendModel GetUserAvatarUrls(int userId,string userEmail, string userAvatar, IAppCache cache, IHttpClientFactory httpClientFactory, byte[] hmacKey)
+    public static UserAvatarFrontendModel GetUserAvatarUrls(int userId,string userEmail, string userAvatar, IAppCache cache, IHttpClientFactory httpClientFactory, IImageUrlGenerator imageUrlGenerator)
     {
         // If FIPS is required, never check the Gravatar service as it only supports MD5 hashing.  
         // Unfortunately, if the FIPS setting is enabled on Windows, using MD5 will throw an exception
@@ -68,31 +70,23 @@ public static class UserExtensions
         }
 
         var customAvatarUrl = "/media/" + userAvatar;
-        var smallSize = GetAvatarCrop(customAvatarUrl, 30, hmacKey);
+        var smallSize = GetAvatarCrop(customAvatarUrl, 30, imageUrlGenerator);
 
         sb.Append(smallSize + " 1x, ");
-        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 60, hmacKey) + " 2x, ");
-        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 90, hmacKey) + " 3x");
+        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 60, imageUrlGenerator) + " 2x, ");
+        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 90, imageUrlGenerator) + " 3x");
 
         return new UserAvatarFrontendModel(smallSize, sb.ToString());
 
     }
 
-    internal static string GetAvatarCrop(string url, int dimensions, byte[] hmacKey)
-    {
-        var queryString = $"rmode=crop&width={dimensions}&height={dimensions}";
-        var result = $"{url}?{queryString}";
-
-        if (hmacKey.Length > 0)
+    internal static string GetAvatarCrop(string url, int dimensions, IImageUrlGenerator imageUrlGenerator)
+        => imageUrlGenerator.GetImageUrl(new ImageUrlGenerationOptions(url)
         {
-            var valueToSign = result.ToLowerInvariant();
-            using var hmac = new HMACSHA256(hmacKey);
-            var hash = hmac.ComputeHash(Encoding.ASCII.GetBytes(valueToSign));
-            result += $"&hmac={Convert.ToHexString(hash).ToLowerInvariant()}";
-        }
-
-        return result;
-    }
+            Width = dimensions,
+            Height = dimensions,
+            ImageCropMode = ImageCropMode.Crop,
+        }) ?? url;
 
     internal static string HashEmailForGravatar(string email)
     {
