@@ -15,7 +15,7 @@ public static class UserExtensions
     /// <returns>
     /// A list of 5 different sized avatar URLs
     /// </returns>
-    public static UserAvatarFrontendModel GetUserAvatarUrls(int userId,string userEmail, string userAvatar, IAppCache cache, IHttpClientFactory httpClientFactory)
+    public static UserAvatarFrontendModel GetUserAvatarUrls(int userId,string userEmail, string userAvatar, IAppCache cache, IHttpClientFactory httpClientFactory, byte[] hmacKey)
     {
         // If FIPS is required, never check the Gravatar service as it only supports MD5 hashing.  
         // Unfortunately, if the FIPS setting is enabled on Windows, using MD5 will throw an exception
@@ -68,19 +68,30 @@ public static class UserExtensions
         }
 
         var customAvatarUrl = "/media/" + userAvatar;
-        var smallSize = GetAvatarCrop(customAvatarUrl, 30);
+        var smallSize = GetAvatarCrop(customAvatarUrl, 30, hmacKey);
 
         sb.Append(smallSize + " 1x, ");
-        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 60) + " 2x, ");
-        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 90) + " 3x");
+        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 60, hmacKey) + " 2x, ");
+        sb.AppendLine(GetAvatarCrop(customAvatarUrl, 90, hmacKey) + " 3x");
 
         return new UserAvatarFrontendModel(smallSize, sb.ToString());
 
     }
 
-    internal static string GetAvatarCrop(string url, int dimensions)
+    internal static string GetAvatarCrop(string url, int dimensions, byte[] hmacKey)
     {
-        return url + $"?width={dimensions}&height={dimensions}&mode=crop";
+        var queryString = $"rmode=crop&width={dimensions}&height={dimensions}";
+        var result = $"{url}?{queryString}";
+
+        if (hmacKey.Length > 0)
+        {
+            var valueToSign = result.ToLowerInvariant();
+            using var hmac = new HMACSHA256(hmacKey);
+            var hash = hmac.ComputeHash(Encoding.ASCII.GetBytes(valueToSign));
+            result += $"&hmac={Convert.ToHexString(hash).ToLowerInvariant()}";
+        }
+
+        return result;
     }
 
     internal static string HashEmailForGravatar(string email)

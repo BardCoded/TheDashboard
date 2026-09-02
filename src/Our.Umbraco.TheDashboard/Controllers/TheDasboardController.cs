@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Our.Umbraco.TheDashboard.Counters.Collections;
 using Our.Umbraco.TheDashboard.Mapping;
 using Our.Umbraco.TheDashboard.Models.Dtos;
@@ -6,6 +7,7 @@ using Our.Umbraco.TheDashboard.Models.Frontend;
 using Our.Umbraco.TheDashboard.Security;
 using Our.Umbraco.TheDashboard.Services;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
@@ -45,6 +47,7 @@ public class TheDashboardController : ControllerBase
     private readonly IBackOfficeSecurity _security;
     private readonly IEntityService _entityService;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IOptions<ImagingSettings> _imagingSettings;
 
     public TheDashboardController(AppCaches appCaches, 
         IScopeProvider scopeProvider,
@@ -53,7 +56,8 @@ public class TheDashboardController : ControllerBase
         IUserService userService,
         IBackOfficeSecurity security,
         IEntityService entityService,
-        IHttpClientFactory httpClientFactory
+        IHttpClientFactory httpClientFactory,
+        IOptions<ImagingSettings> imagingSettings
     )
     {
         _appCaches = appCaches;
@@ -64,6 +68,7 @@ public class TheDashboardController : ControllerBase
         _security = security;
         _entityService = entityService;
         _httpClientFactory = httpClientFactory;
+        _imagingSettings = imagingSettings;
     }
 
     [HttpGet("get-all-recent-activities")]
@@ -126,7 +131,7 @@ public class TheDashboardController : ControllerBase
     private List<RecentActivityFrontendModel> CreateFrontendModelsFrom(List<LogEntryDto> dtos)
     {
         var maxCount = 10;
-        var mapper = new LogEntryToRecentActivityMapper(_appCaches, _httpClientFactory);
+        var mapper = new LogEntryToRecentActivityMapper(_appCaches, _httpClientFactory, _imagingSettings);
 
         // Should return a list of models containing unique items for the nodeId.
         var list = new List<RecentActivityFrontendModel>();

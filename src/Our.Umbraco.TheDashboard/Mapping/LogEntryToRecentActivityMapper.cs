@@ -1,7 +1,9 @@
+using Microsoft.Extensions.Options;
 using Our.Umbraco.TheDashboard.Extensions;
 using Our.Umbraco.TheDashboard.Models.Dtos;
 using Our.Umbraco.TheDashboard.Models.Frontend;
 using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Configuration.Models;
 
 namespace Our.Umbraco.TheDashboard.Mapping;
 
@@ -9,11 +11,16 @@ public class LogEntryToRecentActivityMapper
 {
     private readonly AppCaches _appCaches;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly byte[] _hmacKey;
 
-    public LogEntryToRecentActivityMapper(AppCaches appCaches, IHttpClientFactory httpClientFactory)
+    public LogEntryToRecentActivityMapper(
+        AppCaches appCaches,
+        IHttpClientFactory httpClientFactory,
+        IOptions<ImagingSettings> imagingSettings)
     {
         _appCaches = appCaches;
         _httpClientFactory = httpClientFactory;
+        _hmacKey = imagingSettings.Value.HMACSecretKey;
     }
 
     public RecentActivityFrontendModel Map(LogEntryDto dto)
@@ -35,7 +42,13 @@ public class LogEntryToRecentActivityMapper
             User = new UserFrontendModel()
             {
                 Name = dto.UserName,
-                Avatar = UserExtensions.GetUserAvatarUrls(dto.UserId, dto.UserEmail, dto.UserAvatar, _appCaches.RuntimeCache,_httpClientFactory)
+                Avatar = UserExtensions.GetUserAvatarUrls(
+                    dto.UserId,
+                    dto.UserEmail,
+                    dto.UserAvatar,
+                    _appCaches.RuntimeCache,
+                    _httpClientFactory,
+                    _hmacKey)
             }
         };
     }
