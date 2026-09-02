@@ -14,13 +14,8 @@ using Umbraco.Cms.Web.Common.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Our.Umbraco.TheDashboard.Controllers.OpenApi;
 using Umbraco.Cms.Api.Common.Attributes;
-using Umbraco.Cms.Api.Common.Filters;
-using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.Common.Authorization;
 using Microsoft.AspNetCore.Http;
-using Umbraco.Cms.Web.Common.Routing;
-using Asp.Versioning;
-
 
 namespace Our.Umbraco.TheDashboard.Controllers;
 
